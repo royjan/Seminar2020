@@ -10,6 +10,9 @@ from Utils.Log import writer
 
 @contextmanager
 def lock_action(lock: Lock):
+    """
+    :param lock: Lock threading object to acquire and release after an action
+    """
     lock.acquire()
     yield
     lock.release()
