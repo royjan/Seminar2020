@@ -8,6 +8,10 @@ class Logger:
 
     @staticmethod
     def create_logger(verbose: int = logging.DEBUG):
+        """
+        :param verbose: what is the output level the client wants to see
+        :return: logging object
+        """
         logging.basicConfig(format='%(asctime)s %(message)s')
         log = logging.getLogger()
         log.setLevel(verbose)
