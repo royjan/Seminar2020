@@ -7,9 +7,9 @@ class Preprocess:
     @staticmethod
     def delete_column(df: pd.DataFrame, columns: Union[str, Iterable]) -> pd.DataFrame:
         """
-        :param df: Dataframe
-        :param columns: a column \ columns to drop
-        :return: a new Dataframe
+        :param df: Data frame
+        :param columns: a column or columns to drop
+        :return: a new Data frame
         """
         return df.drop(columns, axis=1)
 
@@ -19,14 +19,14 @@ class Preprocess:
         :param df: Dataframe
         :param columns: columns to one hot (0/1)
         :param sparse_matrix: to sparse the matrix
-        :return: a new Dataframe
+        :return: a new Data frame
         """
         return pd.get_dummies(df, columns=columns, sparse=sparse_matrix)
 
     @staticmethod
     def split_train_test_by_pandas(df: pd.DataFrame, label: str, test_size: float = 0.2) -> [pd.DataFrame]:
         """
-        :param df: Dataframe
+        :param df: Data frame
         :param label: y-label
         :param test_size: 0 to 1 how big is your test size will be
         :return: X_train, X_test, y_train, y_test
