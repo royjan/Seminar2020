@@ -7,7 +7,7 @@ class Logger:
         self.writer = self.create_logger()
 
     @staticmethod
-    def create_logger(verbose: int = logging.DEBUG):
+    def create_logger(verbose: int = logging.CRITICAL):
         """
         :param verbose: what is the output level the client wants to see
         :return: logging object

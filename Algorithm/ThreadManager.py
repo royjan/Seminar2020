@@ -25,6 +25,11 @@ class ThreadManager:
     results = []
 
     @classmethod
+    def reset_values(cls):
+        cls._threads = []
+        cls.results = []
+
+    @classmethod
     def running_threads_args(cls, X_train, y_train, X_test, y_test, params: [dict]):
         """
         :param X_train: X train data

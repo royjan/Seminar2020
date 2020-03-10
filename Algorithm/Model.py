@@ -19,3 +19,11 @@ def learning_model(X_train, y_train, X_test, y_test, model=LinearRegression, **k
     score = mean_squared_error(y_test, y_pred)
     writer.debug(f"set of params: {clf} scored {score}")
     results.append(ThreadManager.result_struct(params=clf, score=score))
+
+
+def get_model_name(clf) -> str:
+    """
+    :param clf: classifier object
+    :return: a string with classifier name
+    """
+    return str(clf.params).split("(")[0]
