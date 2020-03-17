@@ -27,3 +27,11 @@ def get_model_name(clf) -> str:
     :return: a string with classifier name
     """
     return str(clf.params).split("(")[0]
+
+
+##############################
+# Yuval Barnahor - 308465350
+# Roy Jan - 204271209
+# Ricky Danipog - 327072310
+# Ronen Rozen - 203024542
+##############################

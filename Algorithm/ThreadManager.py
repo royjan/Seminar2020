@@ -62,3 +62,11 @@ class ThreadManager:
         :return: Tuple of best result and which set of parameters
         """
         return sorted(cls.results, key=lambda item: item.score, reverse=False)[0]
+
+
+##############################
+# Yuval Barnahor - 308465350
+# Roy Jan - 204271209
+# Ricky Danipog - 327072310
+# Ronen Rozen - 203024542
+##############################

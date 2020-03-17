@@ -64,3 +64,10 @@ class Preprocess:
         means = [self.calc_and_fill_mean(column) for column in self.X]
         means_df = pd.DataFrame([means], columns=self.X.columns)
         return means_df
+
+##############################
+# Yuval Barnahor - 308465350
+# Roy Jan - 204271209
+# Ricky Danipog - 327072310
+# Ronen Rozen - 203024542
+##############################
