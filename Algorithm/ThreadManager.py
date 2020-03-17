@@ -1,3 +1,10 @@
+##############################
+# Yuval Barnahor - 308465350
+# Roy Jan - 204271209
+# Ricky Danipog - 327072310
+# Ronen Rozen - 203024542
+##############################
+
 from contextlib import contextmanager
 from threading import Thread, Lock
 from typing import Tuple
@@ -64,9 +71,3 @@ class ThreadManager:
         return sorted(cls.results, key=lambda item: item.score, reverse=False)[0]
 
 
-##############################
-# Yuval Barnahor - 308465350
-# Roy Jan - 204271209
-# Ricky Danipog - 327072310
-# Ronen Rozen - 203024542
-##############################

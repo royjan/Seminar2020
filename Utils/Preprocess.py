@@ -1,3 +1,10 @@
+##############################
+# Yuval Barnahor - 308465350
+# Roy Jan - 204271209
+# Ricky Danipog - 327072310
+# Ronen Rozen - 203024542
+##############################
+
 import pandas as pd
 from typing import Union, Iterable
 import numpy as np
@@ -65,9 +72,3 @@ class Preprocess:
         means_df = pd.DataFrame([means], columns=self.X.columns)
         return means_df
 
-##############################
-# Yuval Barnahor - 308465350
-# Roy Jan - 204271209
-# Ricky Danipog - 327072310
-# Ronen Rozen - 203024542
-##############################
