@@ -8,7 +8,6 @@
 import pandas as pd
 from typing import Union, Iterable
 import numpy as np
-from pandas import Series
 
 
 class Preprocess:
