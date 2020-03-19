@@ -34,5 +34,3 @@ def get_model_name(clf) -> str:
     :return: a string with classifier name
     """
     return str(clf.params).split("(")[0]
-
-
