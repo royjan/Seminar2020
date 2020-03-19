@@ -13,7 +13,7 @@ from collections import namedtuple
 from Algorithm.Model import learning_model
 from Utils.Log import writer
 
-TIMEOUT_THREAD = 4  # seconds
+TIMEOUT_THREAD = 10  # seconds
 
 
 @contextmanager
@@ -71,8 +71,8 @@ class ThreadManager:
         return sorted(cls.results, key=lambda item: item.score, reverse=False)[0]
 
     @classmethod
-    def is_thread_alive_by_index(cls, index: int):
-        return cls._threads[index].is_alive()
+    def is_finished_by_index(cls, index: int):
+        return not cls._threads[index].is_alive()
 
     @classmethod
     def return_copy_of_threads_list(cls):
