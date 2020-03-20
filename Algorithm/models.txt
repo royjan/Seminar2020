@@ -1,0 +1,1 @@
+[{"model": "SVC", "C": 0.4}, {"model": "LinearRegression", "normalize": "False", "fit_intercept": "False"},{"model": "LinearRegression", "normalize": "True", "fit_intercept": "False"}, {"model": "SVC", "degree": 4},{"model": "DecisionTreeRegressor"}]

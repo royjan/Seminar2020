@@ -8,10 +8,8 @@ import sys
 
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow, QAction, QApplication, QPushButton, QCheckBox, QLabel
-from sklearn.linear_model import LinearRegression
-from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeRegressor
 
+from Algorithm import Model
 from Algorithm.ThreadManager import ThreadManager
 from Utils.FileUtils import FileUtils
 from Utils.Log import logger
@@ -26,9 +24,7 @@ df_total = df1.append(df2).merge(df3, on='Id', how='left')
 pp = Preprocess(df_total, 'SalePrice')
 mean_df = Preprocess.replace_nan(pp)
 X_train, X_test, y_train, y_test = pp.split_train_test_by_pandas()
-params = [{'model': SVC, "C": 0.4}, {'model': LinearRegression, 'normalize': False, "fit_intercept": False},
-          {'model': LinearRegression, 'normalize': True, "fit_intercept": False}, {'model': SVC, "degree": 4},
-          {'model': DecisionTreeRegressor}]
+params = FileUtils.read_models_from_text()
 
 
 class PrimaryWindow(QMainWindow):
@@ -82,7 +78,7 @@ class PrimaryWindow(QMainWindow):
         show checkbox for each model
         """
         for offset, param in enumerate(params):
-            box = QCheckBox(self.get_model_name_by_clf(param['model']), self)
+            box = QCheckBox(Model.get_model_name_by_clf(param['model']), self)
             self.dict_boxes[offset] = box
             box.resize(500, 40)
             box.move(200, 200 + (offset + 1) * 50)
@@ -121,14 +117,10 @@ class PrimaryWindow(QMainWindow):
         QtGui.QGuiApplication.processEvents()
 
     @staticmethod
-    def get_model_name_by_clf(param) -> str:
+    def show_graph_after_training():
         """
-        :param param: param as object
-        :return: clear classifier name as string
+        open new window with graph
         """
-        return str(param).split(".")[-1].split("'")[0]
-
-    def show_graph_after_training(self):
         from Utils.GraphUtils import GraphUtils
         GraphUtils.create_grpah(ThreadManager)
 

@@ -26,4 +26,27 @@ class FileUtils:
         elif file_extension == '.pkl':
             return pd.read_pickle(file_path)
 
+    @staticmethod
+    def read_models_from_text() -> [dict]:
+        """
+        this function is reading the models from file and returns it as list of dictionaries
+        """
+        from Algorithm.Model import supported_models
+        import json
+        with open("../Algorithm/models.txt") as file:
+            data = json.loads(file.read())
+        for item in data:
+            for key in item:
+                if FileUtils.is_boolean(item[key]):
+                    item[key] = item[key] == "true"
+                if key.lower() == "model":
+                    item["model"] = supported_models()[item["model"]]
+        return data
 
+    @staticmethod
+    def is_boolean(value: str) -> bool:
+        """
+        :param value: check if value is a boolean string
+        :return: bool (true / false)
+        """
+        return type(value) is str and value.lower() in ["true", "false"]
