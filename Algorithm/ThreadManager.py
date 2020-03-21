@@ -72,9 +72,9 @@ class ThreadManager:
 
     @classmethod
     def is_finished_by_index(cls, index: int):
+        """
+        :param index: number of index
+        :return: boolean, if thread is finished
+        """
         return not cls._threads[index].is_alive()
 
-    @classmethod
-    def return_copy_of_threads_list(cls):
-        from copy import deepcopy
-        return deepcopy(cls._threads)

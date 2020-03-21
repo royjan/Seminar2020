@@ -29,7 +29,7 @@ class FileUtils:
     @staticmethod
     def read_models_from_text() -> [dict]:
         """
-        this function is reading the models from file and returns it as list of dictionaries
+        reads the models from file and returns it as list of dictionaries
         """
         from Algorithm.Model import supported_models
         import json

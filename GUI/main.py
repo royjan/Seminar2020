@@ -4,9 +4,9 @@
 # Ricky Danipog - 327072310
 # Ronen Rozen - 203024542
 ##############################
-import sys
 
-from PyQt5 import QtGui
+import sys
+from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import QMainWindow, QAction, QApplication, QPushButton, QCheckBox, QLabel
 
 from Algorithm import Model
@@ -22,16 +22,71 @@ df2 = FileUtils.read_data_frame_from_path('../Data/train_2.xlsx', headers)
 df3 = FileUtils.read_data_frame_from_path('../Data/train_targets.csv')
 df_total = df1.append(df2).merge(df3, on='Id', how='left')
 pp = Preprocess(df_total, 'SalePrice')
-mean_df = Preprocess.replace_nan(pp)
+pp.replace_nan()
 X_train, X_test, y_train, y_test = pp.split_train_test_by_pandas()
 params = FileUtils.read_models_from_text()
 
 
+class Worker(QtCore.QObject):
+    """
+    Enable simultaneity work with GUI and other actions
+    """
+    reset_check_boxes = QtCore.pyqtSignal()
+    check_checkbox = QtCore.pyqtSignal(int)
+    show_graph = QtCore.pyqtSignal()
+
+    def __init__(self, parent=None):
+        super(Worker, self).__init__(parent)
+        self.window = parent
+
+    @QtCore.pyqtSlot()
+    def start_worker(self):
+        """
+        Worker starts in a separated thread, doing its work and shows the results
+        """
+        lst_finished = []
+        self.reset_check_boxes.emit()
+        result = ThreadManager.running_threads_args(X_train, y_train, X_test, y_test, params)
+        num_of_threads = len(result)
+        while len(lst_finished) < num_of_threads:
+            for index in range(num_of_threads):
+                if ThreadManager.is_finished_by_index(index) and index not in lst_finished:
+                    self.check_checkbox.emit(index)
+                    lst_finished.append(index)
+        ThreadManager.wait_for_all_threads()
+        self.show_graph.emit()
+
+
 class PrimaryWindow(QMainWindow):
+    """
+    Primary Window - the main menu window
+    """
+
+    class AboutWindow(QMainWindow):
+        """
+        About window - names
+        """
+
+        def __init__(self):
+            super().__init__()
+            self.setGeometry(500, 500, 900, 200)
+            self.setWindowTitle('About')
+            self.init_text()
+
+        def init_text(self):
+            """
+            text init
+            """
+            text_to_show = 'Names: Roy Jan, Ronen Rozen, Yuval Bar-Nahor, Ricky Danipog\nLaProfessor: Itzhak Aviv'
+            label = QLabel(text_to_show, self)
+            label.resize(900, 100)
+            label.move(50, 50)
 
     def __init__(self):
         super().__init__()
-        self.dict_boxes = {}
+        self.about_window = self.AboutWindow()
+        self.worker = Worker()
+        self.checkboxes = {}
         self.init_menu_bar()
         self.init_window()
         self.show_models()
@@ -56,13 +111,14 @@ class PrimaryWindow(QMainWindow):
         """
         shows About window
         """
-        self.w = AboutWindow()
-        self.w.show()
+        self.about_window.show()
 
     def exit_button(self):
         """
         closes project
         """
+        app = QApplication.instance()
+        app.closeAllWindows()
         self.close()
 
     def init_window(self):
@@ -71,48 +127,53 @@ class PrimaryWindow(QMainWindow):
         """
         buttonWindow1 = QPushButton('Run Models', self)
         buttonWindow1.setGeometry(250, 100, 400, 30)
-        buttonWindow1.clicked.connect(self.toggle_check_box)
+        self.init_worker()
+        buttonWindow1.clicked.connect(self.worker.start_worker)
+
+    def init_worker(self):
+        """
+        setup functions to worker and starts the main thread
+        """
+        thread = QtCore.QThread(self)
+        thread.start()
+        self.worker.reset_check_boxes.connect(self.reset_check_boxes)
+        self.worker.check_checkbox.connect(self.check_checkbox)
+        self.worker.show_graph.connect(self.show_graph_after_training)
+        self.worker.moveToThread(thread)
 
     def show_models(self):
         """
         show checkbox for each model
         """
-        for offset, param in enumerate(params):
+        for index, param in enumerate(params):
             box = QCheckBox(Model.get_model_name_by_clf(param['model']), self)
-            self.dict_boxes[offset] = box
+            self.checkboxes[index] = box
             box.resize(500, 40)
-            box.move(200, 200 + (offset + 1) * 50)
+            box.move(200, 200 + (index + 1) * 50)
             box.setEnabled(False)
 
-    def toggle_check_box(self):
-        """
-        toggle to True if the thread finished
-        """
-        lst_finished = []
-        self.reset_check_boxes()
-        result = ThreadManager.running_threads_args(X_train, y_train, X_test, y_test, params)
-        num_of_threads = len(result)
-        while len(lst_finished) < num_of_threads:
-            for index in range(num_of_threads):
-                if ThreadManager.is_finished_by_index(index) and index not in lst_finished:
-                    self.dict_boxes[index].setChecked(True)
-                    self.update()
-                    lst_finished.append(index)
-        ThreadManager.wait_for_all_threads()
-        self.show_graph_after_training()
-
+    @QtCore.pyqtSlot()
     def reset_check_boxes(self):
         """
         clear every checkbox
         """
-        if self.dict_boxes:
-            for box in self.dict_boxes.values():
+        if self.checkboxes:
+            for box in self.checkboxes.values():
                 box.setChecked(False)
+
+    @QtCore.pyqtSlot(int)
+    def check_checkbox(self, index):
+        """
+        :param index: the index in dict boxes
+        checkbox set to True and update GUI
+        """
+        self.checkboxes[index].setChecked(True)
+        self.update()
 
     @staticmethod
     def update():
         """
-        This function is updating the GUI
+        updating the GUI
         """
         QtGui.QGuiApplication.processEvents()
 
@@ -122,23 +183,8 @@ class PrimaryWindow(QMainWindow):
         open new window with graph
         """
         from Utils.GraphUtils import GraphUtils
-        GraphUtils.create_grpah(ThreadManager)
-
-
-class AboutWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setGeometry(500, 500, 900, 200)
-        self.setWindowTitle('About')
-        self.init_text()
-
-    def init_text(self):
-        """
-        text init
-        """
-        label = QLabel('Names: Roy Jan, Ronen Rozen, Yuval Bar-Nahor, Ricky Danipog\nLaProffesior: Itzhak', self)
-        label.resize(900, 100)
-        label.move(50, 50)
+        GraphUtils.create_grpah(ThreadManager.results)
+        ThreadManager.reset_values()  # reset results for the next running
 
 
 if __name__ == '__main__':

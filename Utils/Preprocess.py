@@ -22,7 +22,7 @@ class Preprocess:
 
     @property
     def X(self) -> pd.DataFrame:
-        return self.delete_column(self.df, self.label)
+        return self.delete_column(self.df, [self.label, 'Id'])
 
     @staticmethod
     def delete_column(df: pd.DataFrame, columns: Union[str, Iterable]) -> pd.DataFrame:
@@ -57,17 +57,13 @@ class Preprocess:
     def calc_and_fill_mean(self, column: str) -> [float]:
         """
         :param column: which column to calculate
-        :return: mean of the column
         """
-        mean = np.nanmean(self.X[column])
-        self.X[column] = self.X[column].fillna(mean)
-        return mean
+        mean = np.nanmean(self.df[column])
+        self.df[column] = self.df[column].fillna(mean)
 
-    def replace_nan(self) -> pd.DataFrame:
+    def replace_nan(self):
         """
-        This function replace nan with column's mean
+        replaces nan with column's mean
         """
-        means = [self.calc_and_fill_mean(column) for column in self.X]
-        means_df = pd.DataFrame([means], columns=self.X.columns)
-        return means_df
-
+        for column in self.X.columns:
+            self.calc_and_fill_mean(column)
