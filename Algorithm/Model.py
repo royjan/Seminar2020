@@ -34,3 +34,22 @@ def get_model_name(clf) -> str:
     :return: a string with classifier name
     """
     return str(clf.params).split("(")[0]
+
+
+def get_model_name_by_clf(param) -> str:
+    """
+    :param param: param as object
+    :return: clear classifier name as string
+    """
+    return str(param).split(".")[-1].split("'")[0]
+
+
+def supported_models() -> dict:
+    """
+    return mapping of {classifier string: classifier object,...}
+    """
+    from sklearn.linear_model import LinearRegression
+    from sklearn.svm import SVC
+    from sklearn.tree import DecisionTreeRegressor
+    models = [LinearRegression, SVC, DecisionTreeRegressor]
+    return {get_model_name_by_clf(clf): clf for clf in models}

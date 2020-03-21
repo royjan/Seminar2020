@@ -1,6 +1,9 @@
 class GraphUtils:
     @staticmethod
-    def create_grpah(ThreadManager):
+    def create_grpah(results: list):
+        """
+        :param results: a list of learning results from ThreadManager
+        """
         import numpy as np
         from matplotlib import pyplot as plt
         import matplotlib
@@ -11,9 +14,9 @@ class GraphUtils:
                 'size': 22}
         matplotlib.rc('font', **font)
         fig.canvas.set_window_title('Results')
-        y_label = [item.score for item in ThreadManager.results]
+        y_label = [item.score for item in results]
         x_label = np.arange(len(y_label))
-        models_labels = [Model.get_model_name(clf) for clf in ThreadManager.results]
+        models_labels = [Model.get_model_name(clf) for clf in results]
         plt.bar(x_label, y_label)
         plt.xticks(range(len(models_labels)), models_labels)
         plt.xlabel("Model")

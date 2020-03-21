@@ -23,7 +23,7 @@ if __name__ == '__main__':
     df3 = FileUtils.read_data_frame_from_path('Data/train_targets.csv')
     df_total = df1.append(df2).merge(df3, on='Id', how='left')
     pp = Preprocess(df_total, 'SalePrice')
-    mean_df = Preprocess.replace_nan(pp)
+    pp.replace_nan()
     X_train, X_test, y_train, y_test = pp.split_train_test_by_pandas()
 
     # send to train
