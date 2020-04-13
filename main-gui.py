@@ -17,9 +17,9 @@ from Utils.Preprocess import Preprocess
 
 logger.set_logger_severity('debug')
 headers = ['Id', 'OverallQual', 'YearBuilt', 'OverallCond', 'OpenPorchSF']
-df1 = FileUtils.read_data_frame_from_path('../Data/train_1.csv', headers)
-df2 = FileUtils.read_data_frame_from_path('../Data/train_2.xlsx', headers)
-df3 = FileUtils.read_data_frame_from_path('../Data/train_targets.csv')
+df1 = FileUtils.read_data_frame_from_path('Data/train_1.csv', headers)
+df2 = FileUtils.read_data_frame_from_path('Data/train_2.xlsx', headers)
+df3 = FileUtils.read_data_frame_from_path('Data/train_targets.csv')
 df_total = df1.append(df2).merge(df3, on='Id', how='left')
 pp = Preprocess(df_total, 'SalePrice')
 pp.replace_nan()

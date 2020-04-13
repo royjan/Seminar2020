@@ -33,7 +33,7 @@ class FileUtils:
         """
         from Algorithm.Model import supported_models
         import json
-        with open("../Algorithm/models.txt") as file:
+        with open("Algorithm/models.txt") as file:
             data = json.loads(file.read())
         for item in data:
             for key in item:
