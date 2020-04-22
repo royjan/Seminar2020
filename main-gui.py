@@ -61,7 +61,7 @@ class Worker(QtCore.QObject):
         self.show_graph.emit()
 
     @QtCore.pyqtSlot()
-    def _predict(self):
+    def _predict_worker(self):
         self._predict.emit()
 
 
@@ -212,7 +212,7 @@ class PrimaryWindow(QMainWindow):
         self.result_clf = QLabel(self)
         self.result_clf.setText("")
         self.result_clf.setGeometry(200, 750, 400, 300)
-        buttonWindow2.clicked.connect(self.worker._predict)
+        buttonWindow2.clicked.connect(self.worker._predict_worker)
 
     def show_err_msg(self, err_msg):
         emsg = QtWidgets.QErrorMessage(self)
