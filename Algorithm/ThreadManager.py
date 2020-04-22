@@ -64,7 +64,7 @@ class ThreadManager:
             writer.debug(f'Thread [{thread.getName()}] is finished')
 
     @classmethod
-    def return_best_score(cls) -> Tuple[int, dict]:
+    def return_best_model(cls) -> Tuple[int, dict]:
         """
         :return: Tuple of best result and which set of parameters
         """
