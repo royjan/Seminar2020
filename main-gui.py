@@ -6,8 +6,8 @@
 ##############################
 
 import sys
-from PyQt5 import QtGui, QtCore, QtWidgets
-from PyQt5.QtWidgets import QMainWindow, QAction, QApplication, QPushButton, QCheckBox, QLabel, QLineEdit
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtWidgets import QMainWindow, QAction, QApplication, QPushButton, QCheckBox, QLabel
 
 from Algorithm import Model
 from Algorithm.ThreadManager import ThreadManager
@@ -25,7 +25,6 @@ pp = Preprocess(df_total, 'SalePrice')
 pp.replace_nan()
 X_train, X_test, y_train, y_test = pp.split_train_test_by_pandas()
 params = FileUtils.read_models_from_text()
-best_model = None
 
 
 class Worker(QtCore.QObject):
@@ -35,7 +34,6 @@ class Worker(QtCore.QObject):
     reset_check_boxes = QtCore.pyqtSignal()
     check_checkbox = QtCore.pyqtSignal(int)
     show_graph = QtCore.pyqtSignal()
-    _predict = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
         super(Worker, self).__init__(parent)
@@ -46,7 +44,6 @@ class Worker(QtCore.QObject):
         """
         Worker starts in a separated thread, doing its work and shows the results
         """
-        global best_model
         lst_finished = []
         self.reset_check_boxes.emit()
         result = ThreadManager.running_threads_args(X_train, y_train, X_test, y_test, params)
@@ -57,12 +54,7 @@ class Worker(QtCore.QObject):
                     self.check_checkbox.emit(index)
                     lst_finished.append(index)
         ThreadManager.wait_for_all_threads()
-        best_model = ThreadManager.return_best_model()
         self.show_graph.emit()
-
-    @QtCore.pyqtSlot()
-    def _predict(self):
-        self._predict.emit()
 
 
 class PrimaryWindow(QMainWindow):
@@ -98,7 +90,6 @@ class PrimaryWindow(QMainWindow):
         self.init_menu_bar()
         self.init_window()
         self.show_models()
-        self.create_input_subwindow()
         self.show()
 
     def init_menu_bar(self):
@@ -148,9 +139,7 @@ class PrimaryWindow(QMainWindow):
         self.worker.reset_check_boxes.connect(self.reset_check_boxes)
         self.worker.check_checkbox.connect(self.check_checkbox)
         self.worker.show_graph.connect(self.show_graph_after_training)
-        self.worker._predict.connect(self._predict)
         self.worker.moveToThread(thread)
-
 
     def show_models(self):
         """
@@ -196,42 +185,6 @@ class PrimaryWindow(QMainWindow):
         from Utils.GraphUtils import GraphUtils
         GraphUtils.create_grpah(ThreadManager.results)
         ThreadManager.reset_values()  # reset results for the next running
-
-    def create_input_subwindow(self):
-        """
-        shows new inputs to predict with the best model
-        """
-        self.nameLabel = QLabel(self)
-        self.nameLabel.setText('SQBT:')
-        self.line = QLineEdit(self)
-        self.line.move(300, 600)
-        self.line.resize(200, 32)
-        self.nameLabel.move(200, 600)
-        buttonWindow2 = QPushButton('Predict', self)
-        buttonWindow2.setGeometry(250, 700, 400, 30)
-        self.result_clf = QLabel(self)
-        self.result_clf.setText("")
-        self.result_clf.setGeometry(200, 750, 400, 300)
-        buttonWindow2.clicked.connect(self.worker._predict)
-
-    def show_err_msg(self, err_msg):
-        emsg = QtWidgets.QErrorMessage(self)
-        emsg.setWindowModality(QtCore.Qt.WindowModal)
-        emsg.showMessage(err_msg)
-
-    @QtCore.pyqtSlot()
-    def _predict(self):
-        user_input = self.line.text()
-        if not best_model:
-            self.show_err_msg('You have to run train first!')
-            return
-        if not user_input:
-            self.show_err_msg("Input can't be empty!")
-            return
-        best_model.params.predict([[123, 24]])
-        clf_result = 124124124124
-        self.result_clf.setText(str(clf_result))
-        self.result_clf.update()
 
 
 if __name__ == '__main__':
