@@ -29,7 +29,7 @@ def lock_action(lock: Lock):
 class ThreadManager:
     _threads = {}
     result_struct = namedtuple('Results', ['params', 'score'])
-    results = []
+    results: [result_struct] = []
 
     @classmethod
     def reset_values(cls):
