@@ -8,6 +8,7 @@ class GraphUtils:
         from matplotlib import pyplot as plt
         import matplotlib
         from Algorithm import Model
+        matplotlib.rcParams['toolbar'] = 'None'  # disable toolbar
         fig = plt.figure(figsize=(32, 12))
         font = {'family': 'normal',
                 'weight': 'bold',
@@ -17,7 +18,7 @@ class GraphUtils:
         y_label = [item.score for item in results]
         x_label = np.arange(len(y_label))
         models_labels = [Model.get_model_name(clf) for clf in results]
-        plt.bar(x_label, y_label)
+        plt.bar(x_label, np.array(y_label) / 1e9)
         plt.xticks(range(len(models_labels)), models_labels)
         plt.xlabel("Model")
         plt.ylabel("Score")

@@ -55,11 +55,11 @@ class ThreadManager:
             writer.debug(f'Thread [{thread.getName()}] is finished')
 
     @classmethod
-    def return_best_score(cls) -> Tuple[int, dict]:
+    def return_best_model(cls) -> Tuple[int, dict]:
         """
         :return: Tuple of best result and which set of parameters
         """
-        return sorted(cls.results.values(), key=lambda res: res.score, reverse=False)[0]
+        return sorted(cls.results.values(), key=lambda res: res.score, reverse=False)[0].params
 
 
 class ThreadManagerGUI(ThreadManager):

@@ -34,7 +34,7 @@ if __name__ == '__main__':
               {'model': DecisionTreeRegressor}]
     ThreadManager.running_threads_args(X_train, y_train, X_test, y_test, params)
     ThreadManager.wait_for_all_threads()
-    best_params, best_result = ThreadManager.return_best_score()
+    best_params, best_result = ThreadManager.return_best_model()
     writer.info(f'The best score is {best_result} with these params: {best_params}')
 
     # show some graphs
