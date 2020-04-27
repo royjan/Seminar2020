@@ -178,7 +178,7 @@ class PrimaryWindow(QMainWindow):
         """
         from Utils.GraphUtils import GraphUtils
         GraphUtils.create_graph(ThreadManagerGUI.sorted_results)
-        ThreadManagerGUI.reset_values()  # reset results for the next running
+        # ThreadManagerGUI.reset_values()  # reset results for the next running
 
 
 if __name__ == '__main__':
