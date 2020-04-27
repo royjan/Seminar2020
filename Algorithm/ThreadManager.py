@@ -18,11 +18,7 @@ TIMEOUT_THREAD = 10  # seconds
 class ThreadManager:
     _threads = {}
     result_struct = namedtuple('Results', ['params', 'score'])
-<<<<<<< HEAD
-    results: [result_struct] = []
-=======
     results = {}
->>>>>>> predict-gui
 
     @classmethod
     def reset_values(cls):
@@ -63,7 +59,7 @@ class ThreadManager:
         """
         :return: Tuple of best result and which set of parameters
         """
-        return sorted(cls.results.values(), key=lambda res: res.score, reverse=False)[0]
+        return sorted(cls.results.values(), key=lambda res: res.score, reverse=False)[0].params
 
 
 class ThreadManagerGUI(ThreadManager):

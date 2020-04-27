@@ -51,7 +51,7 @@ class Worker(QtCore.QObject):
         self.reset_check_boxes.emit()
         ThreadManagerGUI.running_threads_args(X_train, y_train, X_test, y_test, params)
         ThreadManagerGUI.wait_for_all_threads(check_checkbox=self.check_checkbox)
-        best_model = ThreadManagerGUI.return_best_model()[0]
+        best_model = ThreadManagerGUI.return_best_model()
         self.show_graph.emit()
 
     @QtCore.pyqtSlot()
@@ -222,7 +222,7 @@ class PrimaryWindow(QMainWindow):
         if not user_input:
             self.show_err_msg("Input can't be empty!")
             return
-        best_model.params.predict([[123, 24]])
+        best_model.predict([[123, 24]])
         clf_result = 124124124124
         self.result_clf.setText(str(clf_result))
         self.result_clf.update()
