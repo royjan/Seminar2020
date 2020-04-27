@@ -5,10 +5,9 @@
 # Ronen Rozen - 203024542
 ##############################
 
-from contextlib import contextmanager
-from threading import Thread, Lock
-from typing import Tuple
 from collections import namedtuple
+from threading import Thread
+from typing import Tuple
 
 from Algorithm.Model import learning_model
 from Utils.Log import writer
@@ -16,25 +15,23 @@ from Utils.Log import writer
 TIMEOUT_THREAD = 10  # seconds
 
 
-@contextmanager
-def lock_action(lock: Lock):
-    """
-    :param lock: Lock threading object to acquire and release after an action
-    """
-    lock.acquire()
-    yield
-    lock.release()
-
-
 class ThreadManager:
     _threads = {}
     result_struct = namedtuple('Results', ['params', 'score'])
+<<<<<<< HEAD
     results: [result_struct] = []
+=======
+    results = {}
+>>>>>>> predict-gui
 
     @classmethod
     def reset_values(cls):
         cls._threads = {}
-        cls.results = []
+        cls.results = {}
+
+    @classmethod
+    def thread_task(cls, index, X_train, y_train, X_test, y_test, params: [dict]):
+        cls.results[index] = learning_model(X_train, y_train, X_test, y_test, **params)
 
     @classmethod
     def running_threads_args(cls, X_train, y_train, X_test, y_test, params: [dict]):
@@ -46,19 +43,17 @@ class ThreadManager:
         :param params: Hyper parameters to check which set of parameters is the best set for our model
         :return: list of the threads
         """
-        lock = Lock()
         for index, param in enumerate(params):
-            thread = Thread(name=str(param), target=learning_model, args=(X_train, y_train, X_test, y_test),
-                            kwargs=param)
-            param['result'] = cls.results
+            thread = Thread(name=str(param), target=ThreadManager.thread_task,
+                            args=(index, X_train, y_train, X_test, y_test, param))
+
+            thread.start()
             writer.debug(f'Thread [{thread.getName()}] is running')
-            with lock_action(lock):
-                thread.start()
-                cls._threads[index] = thread
-        return cls._threads
+            cls._threads[index] = thread
+        return cls.results
 
     @classmethod
-    def wait_for_all_threads(cls):
+    def wait_for_all_threads(cls, **kwargs):
         for thread in cls._threads.values():
             thread.join(TIMEOUT_THREAD)
             writer.debug(f'Thread [{thread.getName()}] is finished')
@@ -68,7 +63,28 @@ class ThreadManager:
         """
         :return: Tuple of best result and which set of parameters
         """
-        return sorted(cls.results, key=lambda item: item.score, reverse=False)[0]
+        return sorted(cls.results.values(), key=lambda res: res.score, reverse=False)[0]
+
+
+class ThreadManagerGUI(ThreadManager):
+
+    sorted_results = []
+
+    @classmethod
+    def wait_for_all_threads(cls, **kwargs):
+        """
+        A manual thread.join(), needed for components that will need to be triggered when a thread ends his task
+        @param kwargs: components needed to react to the thread's training process
+        """
+        check_checkbox = kwargs['check_checkbox']
+        lst_finished = []
+        num_of_threads = len(super()._threads)
+        while len(lst_finished) < num_of_threads:
+            for index in range(num_of_threads):
+                if ThreadManagerGUI.is_finished_by_index(index) and index not in lst_finished:
+                    check_checkbox.emit(index)
+                    lst_finished.append(index)
+        cls.sorted_results = sorted(cls.results.values(), key=lambda res: res.score, reverse=False)
 
     @classmethod
     def is_finished_by_index(cls, index: int):
@@ -76,5 +92,7 @@ class ThreadManager:
         :param index: number of index
         :return: boolean, if thread is finished
         """
-        return not cls._threads[index].is_alive()
-
+        if not cls._threads[index].is_alive():
+            writer.debug(f'Thread [{cls._threads[index].getName()}] is running')
+            return True
+        return False
