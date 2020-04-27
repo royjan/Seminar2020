@@ -14,9 +14,11 @@ import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.svm import SVC
+from sklearn.linear_model import LinearRegression
 
 if __name__ == '__main__':
     # create our data set
+
     headers = ['Id', 'OverallQual', 'YearBuilt', 'OverallCond', 'OpenPorchSF']
     df1 = FileUtils.read_data_frame_from_path('Data/train_1.csv', headers)
     df2 = FileUtils.read_data_frame_from_path('Data/train_2.xlsx', headers)
@@ -27,8 +29,8 @@ if __name__ == '__main__':
     X_train, X_test, y_train, y_test = pp.split_train_test_by_pandas()
 
     # send to train
-    params = [{'model': SVC, "C": 0.4}, {'normalize': False, "fit_intercept": False},
-              {'normalize': True, "fit_intercept": False}, {'model': SVC, "degree": 4},
+    params = [{'model': SVC, "C": 0.4}, {'model': LinearRegression,'normalize': False, "fit_intercept": False},
+              {'model': LinearRegression,'normalize': True, "fit_intercept": False}, {'model': SVC, "degree": 4},
               {'model': DecisionTreeRegressor}]
     ThreadManager.running_threads_args(X_train, y_train, X_test, y_test, params)
     ThreadManager.wait_for_all_threads()
@@ -36,9 +38,9 @@ if __name__ == '__main__':
     writer.info(f'The best score is {best_result} with these params: {best_params}')
 
     # show some graphs
-    y_label = [item.score for item in ThreadManager.results]
+    y_label = [item.score for item in ThreadManager.results.values()]
     x_label = np.arange(len(y_label))
-    models_labels = [Model.get_model_name(clf) for clf in ThreadManager.results]
+    models_labels = [Model.get_model_name(clf) for clf in ThreadManager.results.values()]
     plt.bar(x_label, y_label)
     plt.xticks(range(len(models_labels)), models_labels)
     plt.xlabel("Model")
