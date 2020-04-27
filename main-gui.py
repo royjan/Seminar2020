@@ -6,11 +6,12 @@
 ##############################
 
 import sys
+
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QAction, QApplication, QPushButton, QCheckBox, QLabel, QLineEdit
 
 from Algorithm import Model
-from Algorithm.ThreadManager import ThreadManager
+from Algorithm.ThreadManager import ThreadManagerGUI
 from Utils.FileUtils import FileUtils
 from Utils.Log import logger
 from Utils.Preprocess import Preprocess
@@ -47,17 +48,10 @@ class Worker(QtCore.QObject):
         Worker starts in a separated thread, doing its work and shows the results
         """
         global best_model
-        lst_finished = []
         self.reset_check_boxes.emit()
-        result = ThreadManager.running_threads_args(X_train, y_train, X_test, y_test, params)
-        num_of_threads = len(result)
-        while len(lst_finished) < num_of_threads:
-            for index in range(num_of_threads):
-                if ThreadManager.is_finished_by_index(index) and index not in lst_finished:
-                    self.check_checkbox.emit(index)
-                    lst_finished.append(index)
-        ThreadManager.wait_for_all_threads()
-        best_model = ThreadManager.return_best_model()
+        ThreadManagerGUI.running_threads_args(X_train, y_train, X_test, y_test, params)
+        ThreadManagerGUI.wait_for_all_threads(check_checkbox=self.check_checkbox)
+        best_model = ThreadManagerGUI.return_best_model()[0]
         self.show_graph.emit()
 
     @QtCore.pyqtSlot()
@@ -194,8 +188,8 @@ class PrimaryWindow(QMainWindow):
         open new window with graph
         """
         from Utils.GraphUtils import GraphUtils
-        GraphUtils.create_grpah(ThreadManager.results)
-        ThreadManager.reset_values()  # reset results for the next running
+        GraphUtils.create_graph(ThreadManagerGUI.sorted_results)
+        # ThreadManagerGUI.reset_values()  # reset results for the next running
 
     def create_input_subwindow(self):
         """
