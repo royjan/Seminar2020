@@ -80,7 +80,6 @@ class ThreadManagerGUI(ThreadManager):
                 if ThreadManagerGUI.is_finished_by_index(index) and index not in lst_finished:
                     check_checkbox.emit(index)
                     lst_finished.append(index)
-        super().wait_for_all_threads()
         cls.sorted_results = sorted(cls.results.values(), key=lambda res: res.score, reverse=False)
 
     @classmethod
