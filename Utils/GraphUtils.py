@@ -1,6 +1,6 @@
 class GraphUtils:
     @staticmethod
-    def create_grpah(results: list):
+    def create_graph(results: list):
         """
         :param results: a list of learning results from ThreadManager
         """
