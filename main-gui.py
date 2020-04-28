@@ -6,7 +6,10 @@
 ##############################
 
 import sys
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QAction, QApplication, QPushButton, QCheckBox, QLabel, QLineEdit
 
@@ -57,7 +60,10 @@ class Worker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def _predict_worker(self):
         self._predict.emit()
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 
 class PrimaryWindow(QMainWindow):
     """
