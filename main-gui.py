@@ -6,17 +6,14 @@
 ##############################
 
 import sys
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QAction, QApplication, QPushButton, QCheckBox, QLabel, QLineEdit
 
 from Algorithm import Model
 from Algorithm.ThreadManager import ThreadManagerGUI
 from Utils.FileUtils import FileUtils
-from Utils.Log import logger
+from Utils.Log import logger, writer
 from Utils.Preprocess import Preprocess
 
 logger.set_logger_severity('debug')
@@ -59,11 +56,10 @@ class Worker(QtCore.QObject):
 
     @QtCore.pyqtSlot()
     def _predict_worker(self):
+        """
+        predict with GUI worker
+        """
         self._predict.emit()
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 
 class PrimaryWindow(QMainWindow):
     """
@@ -204,23 +200,29 @@ class PrimaryWindow(QMainWindow):
         self.nameLabel = QLabel(self)
         self.nameLabel.setText('SQBT:')
         self.line = QLineEdit(self)
-        self.line.move(300, 600)
-        self.line.resize(200, 32)
+        self.line.setGeometry(300, 600, 200, 32)
         self.nameLabel.move(200, 600)
         buttonWindow2 = QPushButton('Predict', self)
         buttonWindow2.setGeometry(250, 700, 400, 30)
         self.result_clf = QLabel(self)
         self.result_clf.setText("")
-        self.result_clf.setGeometry(200, 750, 400, 300)
+        self.result_clf.setGeometry(200, 520, 400, 30)
         buttonWindow2.clicked.connect(self.worker._predict_worker)
 
     def show_err_msg(self, err_msg):
+        """
+        :param err_msg: pop-up an error message with err_msg text
+        """
+        writer.error(err_msg)
         emsg = QtWidgets.QErrorMessage(self)
         emsg.setWindowModality(QtCore.Qt.WindowModal)
         emsg.showMessage(err_msg)
 
     @QtCore.pyqtSlot()
     def _predict(self):
+        """
+        receive an input from user and use it to prediction
+        """
         user_input = self.line.text()
         if not best_model:
             self.show_err_msg('You have to run train first!')
@@ -228,9 +230,10 @@ class PrimaryWindow(QMainWindow):
         if not user_input:
             self.show_err_msg("Input can't be empty!")
             return
-        best_model.predict([[123, 24]])
+        # clf_result = best_model.predict([[123, 24]]) #TODO: let's talk about how we create a predict row
         clf_result = 124124124124
-        self.result_clf.setText(str(clf_result))
+        writer.info(f"Prediction for {user_input} = {clf_result}")
+        self.result_clf.setText(f"Prediction: {clf_result}")
         self.result_clf.update()
 
 
