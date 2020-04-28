@@ -20,7 +20,7 @@ class Logger:
         :return: logging object
         """
         logging.getLogger('matplotlib').setLevel(logging.ERROR)
-        logging.basicConfig(format='%(asctime)s %(message)s', filename='../history.log', level=logging.DEBUG)
+        logging.basicConfig(format='%(asctime)s %(message)s', filename='history.log', level=logging.DEBUG)
         log = logging.getLogger()
         log.setLevel(verbose)
         return log

@@ -16,7 +16,7 @@ from Utils.FileUtils import FileUtils
 from Utils.Log import logger, writer
 from Utils.Preprocess import Preprocess
 
-logger.set_logger_severity('debug')
+logger.set_logger_severity('info')
 headers = ['Id', 'OverallQual', 'YearBuilt', 'OverallCond', 'OpenPorchSF']
 df1 = FileUtils.read_data_frame_from_path('Data/train_1.csv', headers)
 df2 = FileUtils.read_data_frame_from_path('Data/train_2.xlsx', headers)
@@ -51,7 +51,7 @@ class Worker(QtCore.QObject):
         self.reset_check_boxes.emit()
         ThreadManagerGUI.running_threads_args(X_train, y_train, X_test, y_test, params)
         ThreadManagerGUI.wait_for_all_threads(check_checkbox=self.check_checkbox)
-        best_model = ThreadManagerGUI.return_best_model()
+        best_model, _ = ThreadManagerGUI.return_best_model()
         self.show_graph.emit()
 
     @QtCore.pyqtSlot()
@@ -60,6 +60,7 @@ class Worker(QtCore.QObject):
         predict with GUI worker
         """
         self._predict.emit()
+
 
 class PrimaryWindow(QMainWindow):
     """
@@ -147,7 +148,6 @@ class PrimaryWindow(QMainWindow):
         self.worker._predict.connect(self._predict)
         self.worker.moveToThread(thread)
 
-
     def show_models(self):
         """
         show checkbox for each model
@@ -209,30 +209,31 @@ class PrimaryWindow(QMainWindow):
         self.result_clf.setGeometry(200, 520, 400, 30)
         buttonWindow2.clicked.connect(self.worker._predict_worker)
 
-    def show_err_msg(self, err_msg):
+    def show_err_msg(self, err_msg: str, user_input: str):
         """
+        :param user_input: user input
         :param err_msg: pop-up an error message with err_msg text
         """
-        writer.error(err_msg)
+        writer.error(f'Error: {err_msg} | Input: {user_input}')
         emsg = QtWidgets.QErrorMessage(self)
         emsg.setWindowModality(QtCore.Qt.WindowModal)
-        emsg.showMessage(err_msg)
+        emsg.showMessage(err_msg) \
 
-    @QtCore.pyqtSlot()
+    @ QtCore.pyqtSlot()
     def _predict(self):
         """
         receive an input from user and use it to prediction
         """
         user_input = self.line.text()
         if not best_model:
-            self.show_err_msg('You have to run train first!')
+            self.show_err_msg('You have to run train first!', user_input)
             return
         if not user_input:
-            self.show_err_msg("Input can't be empty!")
+            self.show_err_msg("Input can't be empty!", user_input)
             return
         # clf_result = best_model.predict([[123, 24]]) #TODO: let's talk about how we create a predict row
         clf_result = 124124124124
-        writer.info(f"Prediction for {user_input} = {clf_result}")
+        writer.info(f"Prediction for {user_input} => {clf_result}")
         self.result_clf.setText(f"Prediction: {clf_result}")
         self.result_clf.update()
 
