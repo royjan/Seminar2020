@@ -217,7 +217,7 @@ class PrimaryWindow(QMainWindow):
         writer.error(f'Error: {err_msg} | Input: {user_input}')
         emsg = QtWidgets.QErrorMessage(self)
         emsg.setWindowModality(QtCore.Qt.WindowModal)
-        emsg.showMessage(err_msg) \
+        emsg.showMessage(err_msg)
 
     @ QtCore.pyqtSlot()
     def _predict(self):
