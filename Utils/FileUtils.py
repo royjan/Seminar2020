@@ -38,9 +38,9 @@ class FileUtils:
         for item in data:
             for key in item:
                 if FileUtils.is_boolean(item[key]):
-                    item[key] = item[key] == "true"
+                    item[key] = item[key].lower() == "true"
                 if key.lower() == "model":
-                    item["model"] = supported_models()[item["model"]]
+                    item["model"] = supported_models(item["model"])
         return data
 
     @staticmethod

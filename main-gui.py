@@ -153,9 +153,11 @@ class PrimaryWindow(QMainWindow):
         show checkbox for each model
         """
         for index, param in enumerate(params):
-            box = QCheckBox(Model.get_model_name_by_clf(param['model']), self)
+            model_clf = Model.get_model_name_by_clf(param['model'])
+            model_params = f"\t({','.join(f'{k}:{v}' for k, v in param.items() if k != 'model')})"
+            box = QCheckBox(f"{model_clf} {model_params}", self)
             self.checkboxes[index] = box
-            box.resize(500, 40)
+            box.resize(700, 40)
             box.move(200, 200 + (index + 1) * 50)
             box.setEnabled(False)
 
@@ -219,7 +221,7 @@ class PrimaryWindow(QMainWindow):
         emsg.setWindowModality(QtCore.Qt.WindowModal)
         emsg.showMessage(err_msg)
 
-    @ QtCore.pyqtSlot()
+    @QtCore.pyqtSlot()
     def _predict(self):
         """
         receive an input from user and use it to prediction
