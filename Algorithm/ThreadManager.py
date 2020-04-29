@@ -53,13 +53,15 @@ class ThreadManager:
         for thread in cls._threads.values():
             thread.join(TIMEOUT_THREAD)
             writer.debug(f'Thread [{thread.getName()}] is finished')
+        best_params, best_result = cls.return_best_model()
+        writer.info(f'The best score is {best_result:.2f} with these params: {best_params}')
 
     @classmethod
     def return_best_model(cls) -> Tuple[int, dict]:
         """
         :return: Tuple of best result and which set of parameters
         """
-        return sorted(cls.results.values(), key=lambda res: res.score, reverse=False)[0].params
+        return sorted(cls.results.values(), key=lambda res: res.score, reverse=False)[0]
 
 
 class ThreadManagerGUI(ThreadManager):
@@ -77,10 +79,13 @@ class ThreadManagerGUI(ThreadManager):
         num_of_threads = len(super()._threads)
         while len(lst_finished) < num_of_threads:
             for index in range(num_of_threads):
-                if ThreadManagerGUI.is_finished_by_index(index) and index not in lst_finished:
+                if cls.is_finished_by_index(index) and index not in lst_finished:
                     check_checkbox.emit(index)
                     lst_finished.append(index)
         cls.sorted_results = sorted(cls.results.values(), key=lambda res: res.score, reverse=False)
+        best_params, best_result = cls.return_best_model()
+        writer.info(f'The best score is {best_result:.2f} with these params: {best_params}')
+
 
     @classmethod
     def is_finished_by_index(cls, index: int):
