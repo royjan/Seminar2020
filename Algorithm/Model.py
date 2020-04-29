@@ -45,7 +45,7 @@ def get_model_name_by_clf(param) -> str:
     return str(param).split(".")[-1].split("'")[0]
 
 
-def supported_models(algorithm: str) -> dict:
+def return_model_by_name(algorithm: str) -> dict:
     """
     return mapping of {classifier string: classifier object,...}
     """

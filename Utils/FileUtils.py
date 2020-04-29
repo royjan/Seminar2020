@@ -31,7 +31,7 @@ class FileUtils:
         """
         reads the models from file and returns it as list of dictionaries
         """
-        from Algorithm.Model import supported_models
+        from Algorithm.Model import return_model_by_name
         import json
         with open("Algorithm/models.txt") as file:
             data = json.loads(file.read())
@@ -40,7 +40,7 @@ class FileUtils:
                 if FileUtils.is_boolean(item[key]):
                     item[key] = item[key].lower() == "true"
                 if key.lower() == "model":
-                    item["model"] = supported_models(item["model"])
+                    item["model"] = return_model_by_name(item["model"])
         return data
 
     @staticmethod
