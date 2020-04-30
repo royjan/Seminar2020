@@ -45,7 +45,7 @@ def get_model_name_by_clf(param) -> str:
     return str(param).split(".")[-1].split("'")[0]
 
 
-def supported_models() -> dict:
+def return_model_by_name(algorithm: str) -> dict:
     """
     return mapping of {classifier string: classifier object,...}
     """
@@ -53,4 +53,5 @@ def supported_models() -> dict:
     from sklearn.svm import SVC
     from sklearn.tree import DecisionTreeRegressor
     models = [LinearRegression, SVC, DecisionTreeRegressor]
-    return {get_model_name_by_clf(clf): clf for clf in models}
+    algorithm_dict = {get_model_name_by_clf(clf): clf for clf in models}
+    return algorithm_dict[algorithm]

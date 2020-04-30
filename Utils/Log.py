@@ -19,7 +19,8 @@ class Logger:
         :param verbose: what is the output level the client wants to see
         :return: logging object
         """
-        logging.basicConfig(format='%(asctime)s %(message)s', filename='../history.log', level=logging.DEBUG)
+        logging.getLogger('matplotlib').setLevel(logging.ERROR)
+        logging.basicConfig(format='%(asctime)s %(message)s', filename='history.log', level=logging.DEBUG)
         log = logging.getLogger()
         log.setLevel(verbose)
         return log
