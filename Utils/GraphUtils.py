@@ -8,6 +8,7 @@ class GraphUtils:
         from matplotlib import pyplot as plt
         import matplotlib
         from Algorithm import Model
+        matplotlib.rcParams['toolbar'] = 'None' # disable toolbar
         fig = plt.figure(figsize=(32, 15))
         font = {'family': 'normal',
                 'weight': 'bold',
