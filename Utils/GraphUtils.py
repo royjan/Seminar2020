@@ -23,7 +23,7 @@ class GraphUtils:
         plt.bar(x_label, np.array(y_label) / 1e9)
         plt.xticks(range(len(models_labels)), models_labels)
         plt.xlabel("Model")
-        plt.ylabel("Score")
+        plt.ylabel("Loss")
         plt.title("Results")
         plt.show()
 
