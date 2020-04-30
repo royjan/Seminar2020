@@ -8,7 +8,7 @@ class GraphUtils:
         from matplotlib import pyplot as plt
         import matplotlib
         from Algorithm import Model
-        fig = plt.figure(figsize=(32, 12))
+        fig = plt.figure(figsize=(32, 15))
         font = {'family': 'normal',
                 'weight': 'bold',
                 'size': 22}
@@ -22,7 +22,7 @@ class GraphUtils:
         plt.bar(x_label, np.array(y_label) / 1e9)
         plt.xticks(range(len(models_labels)), models_labels)
         plt.xlabel("Model")
-        plt.ylabel("Score")
+        plt.ylabel("Loss")
         plt.title("Results")
         plt.show()
 

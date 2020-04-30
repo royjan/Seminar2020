@@ -27,6 +27,7 @@ pp = Preprocess(df_total, 'SalePrice')
 pp.replace_nan()
 X_train, X_test, y_train, y_test = pp.split_train_test_by_pandas()
 params = FileUtils.read_models_from_text()
+best_model = None
 
 
 class Worker(QtCore.QObject):
@@ -36,6 +37,7 @@ class Worker(QtCore.QObject):
     reset_check_boxes = QtCore.pyqtSignal()
     check_checkbox = QtCore.pyqtSignal(int)
     show_graph = QtCore.pyqtSignal()
+    _predict = QtCore.pyqtSignal()
 
     def __init__(self, parent=None):
         super(Worker, self).__init__(parent)
@@ -62,6 +64,7 @@ class Worker(QtCore.QObject):
         predict with GUI worker
         """
         self._predict.emit()
+
 
 class PrimaryWindow(QMainWindow):
     """
@@ -101,18 +104,19 @@ class PrimaryWindow(QMainWindow):
             label = QLabel(text_to_show, self)
             label.setGeometry(50, 50, 900, 100)
 
-
     def __init__(self):
         super().__init__()
-        self.name_label = QLabel(self)
-        self.run_model_explain = QLabel(self)
-        self.line = QLineEdit(self)
+        self.predict_input_label = QLabel('SQBT', self)
+        self.run_model_explain = QLabel('Click "Run Models" to start learning!', self)
+        self.send_to_predict = QPushButton('Predict', self)
+        self.predict_input = QLineEdit(self)
         self.result_clf = QLabel(self)
         self.about_window = self.AboutWindow()
         self.worker = Worker()
         self.checkboxes = {}
         self.init_menu_bar()
         self.init_window()
+        self.create_input_subwindow()
         self.show_models()
         self.show()
 
@@ -153,7 +157,6 @@ class PrimaryWindow(QMainWindow):
         buttonWindow1.setGeometry(250, 100, 400, 30)
         self.init_worker()
         buttonWindow1.clicked.connect(self.worker.start_worker)
-        self.run_model_explain.setText('Click "Run Models" to start learning!')
         self.run_model_explain.setGeometry(250, 150, 500, 30)
 
     def init_worker(self):
@@ -165,6 +168,7 @@ class PrimaryWindow(QMainWindow):
         self.worker.reset_check_boxes.connect(self.reset_check_boxes)
         self.worker.check_checkbox.connect(self.check_checkbox)
         self.worker.show_graph.connect(self.show_graph_after_training)
+        self.worker._predict.connect(self._predict)
         self.worker.moveToThread(thread)
 
     def show_models(self):
@@ -218,14 +222,12 @@ class PrimaryWindow(QMainWindow):
         """
         shows new inputs to predict with the best model
         """
-        self.name_label.setText('SQBT:')
-        self.line.setGeometry(300, 600, 200, 32)
-        self.name_label.move(200, 600)
-        buttonWindow2 = QPushButton('Predict', self)
-        buttonWindow2.setGeometry(250, 700, 400, 30)
+        self.predict_input.setGeometry(300, 600, 200, 32)
+        self.predict_input_label.setGeometry(200, 600, 200, 32)
+        self.send_to_predict.setGeometry(250, 700, 400, 30)
         self.result_clf.setText("")
         self.result_clf.setGeometry(200, 520, 400, 30)
-        buttonWindow2.clicked.connect(self.worker._predict_worker)
+        self.send_to_predict.clicked.connect(self.worker._predict_worker)
 
     def show_err_msg(self, err_msg: str, user_input: str):
         """
@@ -242,7 +244,7 @@ class PrimaryWindow(QMainWindow):
         """
         receive an input from user and use it to prediction
         """
-        user_input = self.line.text()
+        user_input = self.predict_input.text()
         if not best_model:
             self.show_err_msg('You have to run train first!', user_input)
             return

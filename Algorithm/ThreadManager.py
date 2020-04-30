@@ -57,7 +57,7 @@ class ThreadManager:
         writer.info(f'The best score is {best_result:.2f} with these params: {best_params}')
 
     @classmethod
-    def return_best_score(cls) -> Tuple[int, dict]:
+    def return_best_model(cls) -> Tuple[int, dict]:
         """
         :return: Tuple of best result and which set of parameters
         """
@@ -65,7 +65,6 @@ class ThreadManager:
 
 
 class ThreadManagerGUI(ThreadManager):
-
     sorted_results = []
 
     @classmethod
@@ -85,7 +84,6 @@ class ThreadManagerGUI(ThreadManager):
         cls.sorted_results = sorted(cls.results.values(), key=lambda res: res.score, reverse=False)
         best_params, best_result = cls.return_best_model()
         writer.info(f'The best score is {best_result:.2f} with these params: {best_params}')
-
 
     @classmethod
     def is_finished_by_index(cls, index: int):
