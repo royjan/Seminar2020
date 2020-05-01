@@ -8,6 +8,7 @@
 import pandas as pd
 from typing import Union, Iterable
 import numpy as np
+from Utils.Log import writer
 
 
 class Preprocess:
@@ -31,6 +32,7 @@ class Preprocess:
         :param columns: a column or columns to drop
         :return: a new Data frame
         """
+        writer.debug(f"Deleting columns '{columns}'")
         return df.drop(columns, axis=1)
 
     def one_hot_encode(self, columns: list = None, sparse_matrix: bool = True) -> pd.DataFrame:
@@ -46,6 +48,7 @@ class Preprocess:
         :param test_size: 0 to 1 how big is your test size will be
         :return: X_train, X_test, y_train, y_test
         """
+        writer.debug("Splitting the data to - X_train, X_test, y_train, y_test")
         train = self.df.sample(frac=1 - test_size, random_state=42)
         test = self.df.drop(train.index)
         X_train = Preprocess.delete_column(train, self.label)
@@ -59,6 +62,7 @@ class Preprocess:
         :param column: which column to calculate
         """
         mean = np.nanmean(self.df[column])
+        writer.debug(f"fill N\\A Values for column '{column}' with the mean '{mean}'")
         self.df[column] = self.df[column].fillna(mean)
 
     def replace_nan(self):

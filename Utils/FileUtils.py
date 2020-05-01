@@ -6,6 +6,7 @@
 ##############################
 
 import pandas as pd
+from Utils.Log import logger, writer
 
 
 class FileUtils:
@@ -20,10 +21,13 @@ class FileUtils:
         import os
         file_name, file_extension = os.path.splitext(file_path)
         if file_extension == '.csv':
+            writer.debug(f"Reading file '{file_name}{file_extension}' with pandas | pd.read_csv")
             return pd.read_csv(file_path, index_col=False, usecols=headers)
         elif file_extension == '.xlsx':
+            writer.debug(f"Reading file '{file_name}{file_extension}' with pandas | pd.read_excel")
             return pd.read_excel(file_path, index_col=False, usecols=headers)
         elif file_extension == '.pkl':
+            writer.debug(f"Reading file '{file_name}{file_extension}' with pandas | pd.read_pickle")
             return pd.read_pickle(file_path)
 
     @staticmethod

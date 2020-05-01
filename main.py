@@ -8,7 +8,7 @@
 from Algorithm import Model
 from Utils.Preprocess import Preprocess
 from Algorithm.ThreadManager import ThreadManager
-from Utils.Log import writer
+from Utils.Log import writer, logger
 from Utils.FileUtils import FileUtils
 import numpy as np
 from matplotlib import pyplot as plt
@@ -18,7 +18,7 @@ from sklearn.linear_model import LinearRegression
 
 if __name__ == '__main__':
     # create our data set
-
+    logger.set_logger_severity('debug')
     headers = ['Id', 'OverallQual', 'YearBuilt', 'OverallCond', 'OpenPorchSF']
     df1 = FileUtils.read_data_frame_from_path('Data/train_1.csv', headers)
     df2 = FileUtils.read_data_frame_from_path('Data/train_2.xlsx', headers)
@@ -34,7 +34,7 @@ if __name__ == '__main__':
               {'model': DecisionTreeRegressor}]
     ThreadManager.running_threads_args(X_train, y_train, X_test, y_test, params)
     ThreadManager.wait_for_all_threads()
-    best_params, best_result = ThreadManager.return_best_score()
+    best_params, best_result = ThreadManager.return_best_model()
     writer.info(f'The best score is {best_result} with these params: {best_params}')
 
     # show some graphs

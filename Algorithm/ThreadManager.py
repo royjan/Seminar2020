@@ -81,7 +81,9 @@ class ThreadManagerGUI(ThreadManager):
                 if cls.is_finished_by_index(index) and index not in lst_finished:
                     check_checkbox.emit(index)
                     lst_finished.append(index)
+        writer.debug(f"Sorting results by score , before sort -{cls.reset_values()}")
         cls.sorted_results = sorted(cls.results.values(), key=lambda res: res.score, reverse=False)
+        writer.debug(f"Results after sort - {cls.sorted_results}")
         best_params, best_result = cls.return_best_model()
         writer.info(f'The best score is {best_result:.2f} with these params: {best_params}')
 
