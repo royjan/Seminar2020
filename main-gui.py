@@ -256,10 +256,13 @@ class PrimaryWindow(QMainWindow):
         if not user_input:
             self.show_err_msg("Input can't be empty!", user_input)
             return
+        if not user_input.isdigit():
+            self.show_err_msg("Input has to be an integer!", user_input)
+            return
         row = X_train.iloc[0].copy()  # take the first row to predict with
         row.OverallQual = int(user_input)
         clf_result = best_model.predict([row])[0]
-        writer.info(f"Prediction for {user_input} => {clf_result}")
+        writer.info(f"Prediction for OverallQuality {user_input} => {clf_result}")
         self.result_clf.setText(f"Prediction: {clf_result:.2f}")
         self.result_clf.update()
 
