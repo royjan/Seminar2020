@@ -8,7 +8,7 @@ class GraphUtils:
         from matplotlib import pyplot as plt
         import matplotlib
         from Algorithm import Model
-        matplotlib.rcParams['toolbar'] = 'None' # disable toolbar
+        matplotlib.rcParams['toolbar'] = 'None'  # disable toolbar
         fig = plt.figure(figsize=(32, 15))
         font = {'family': 'normal',
                 'weight': 'bold',
@@ -37,7 +37,7 @@ class GraphUtils:
         return re.sub(r"(\w)([A-Z])", r"\1\n\2", word) if not word.isupper() else word
 
     @staticmethod
-    def get_counts_in_names(lst : list) -> list:
+    def get_counts_in_names(lst: list) -> list:
         """
         add numbers if duplicates (like: SVC1 SVC2)
         """

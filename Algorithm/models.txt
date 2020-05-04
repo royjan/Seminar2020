@@ -1,1 +1,1 @@
-[{"model": "SVC", "C": 0.4}, {"model": "LinearRegression", "normalize": "False", "fit_intercept": "False"},{"model": "LinearRegression", "normalize": "True", "fit_intercept": "False"}, {"model": "SVC", "degree": 4},{"model": "DecisionTreeRegressor"}]
+[{"model": "GradientBoostingRegressor", "random_state": 21}, {"model": "LinearRegression", "normalize": "False", "fit_intercept": "False"},{"model": "LinearRegression", "normalize": "True", "fit_intercept": "False"}, {"model": "ElasticNet", "alpha": 0.01},{"model": "DecisionTreeRegressor"}]

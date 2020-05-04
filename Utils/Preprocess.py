@@ -13,7 +13,7 @@ import numpy as np
 class Preprocess:
 
     def __init__(self, df: pd.DataFrame, label: str):
-        self.df = df
+        self.df = self.delete_column(df, 'Id')
         self.label = label
 
     @property
@@ -22,7 +22,7 @@ class Preprocess:
 
     @property
     def X(self) -> pd.DataFrame:
-        return self.delete_column(self.df, [self.label, 'Id'])
+        return self.delete_column(self.df, self.label)
 
     @staticmethod
     def delete_column(df: pd.DataFrame, columns: Union[str, Iterable]) -> pd.DataFrame:
@@ -33,13 +33,16 @@ class Preprocess:
         """
         return df.drop(columns, axis=1)
 
-    def one_hot_encode(self, columns: list = None, sparse_matrix: bool = True) -> pd.DataFrame:
+    def one_hot_encode(self, columns: list = None, sparse_matrix: bool = False):
         """
         :param columns: columns to one hot (0/1)
         :param sparse_matrix: to sparse the matrix
         :return: a new Data frame
         """
-        return pd.get_dummies(self.df, columns=columns, sparse=sparse_matrix)
+        for column in columns:
+            temp_df = pd.get_dummies(self.df[column], sparse=sparse_matrix, prefix=column)
+            self.df = pd.concat([self.df, temp_df], axis=1)
+            self.df = self.delete_column(self.df, column)
 
     def split_train_test_by_pandas(self, test_size: float = 0.2) -> [pd.DataFrame]:
         """

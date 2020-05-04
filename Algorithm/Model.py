@@ -4,7 +4,6 @@
 # Ricky Danipog - 327072310
 # Ronen Rozen - 203024542
 ##############################
-
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
@@ -49,9 +48,10 @@ def return_model_by_name(algorithm: str) -> dict:
     """
     return mapping of {classifier string: classifier object,...}
     """
-    from sklearn.linear_model import LinearRegression
+    from sklearn.linear_model import LinearRegression, ElasticNet
     from sklearn.svm import SVC
     from sklearn.tree import DecisionTreeRegressor
-    models = [LinearRegression, SVC, DecisionTreeRegressor]
+    from sklearn.ensemble import GradientBoostingRegressor
+    models = [LinearRegression, SVC, DecisionTreeRegressor, ElasticNet, GradientBoostingRegressor]
     algorithm_dict = {get_model_name_by_clf(clf): clf for clf in models}
     return algorithm_dict[algorithm]
