@@ -17,13 +17,18 @@ from Utils.FileUtils import FileUtils
 from Utils.Log import logger, writer
 from Utils.Preprocess import Preprocess
 
+numeric_headers = ['LotArea', 'LotFrontage', 'MasVnrArea', 'TotalBsmtSF', 'OverallQual', 'OverallCond', '1stFlrSF',
+                   '2ndFlrSF', 'GarageArea', 'OpenPorchSF']
+categorical_headers = ['ExterQual', 'KitchenQual', 'GarageQual', 'Electrical', 'Fence', 'BsmtFinType1']
 logger.set_logger_severity('info')
-headers = ['Id', 'OverallQual', 'YearBuilt', 'OverallCond', 'OpenPorchSF']
+headers = ['Id'] + numeric_headers + categorical_headers
+
 df1 = FileUtils.read_data_frame_from_path('Data/train_1.csv', headers)
 df2 = FileUtils.read_data_frame_from_path('Data/train_2.xlsx', headers)
 df3 = FileUtils.read_data_frame_from_path('Data/train_targets.csv')
 df_total = df1.append(df2).merge(df3, on='Id', how='left')
 pp = Preprocess(df_total, 'SalePrice')
+pp.one_hot_encode(categorical_headers)
 pp.replace_nan()
 X_train, X_test, y_train, y_test = pp.split_train_test_by_pandas()
 params = FileUtils.read_models_from_text()
@@ -106,7 +111,7 @@ class PrimaryWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.predict_input_label = QLabel('SQBT', self)
+        self.predict_input_label = QLabel('Overall Quality:', self)
         self.run_model_explain = QLabel('Click "Run Models" to start learning!', self)
         self.send_to_predict = QPushButton('Predict', self)
         self.predict_input = QLineEdit(self)
@@ -222,7 +227,7 @@ class PrimaryWindow(QMainWindow):
         """
         shows new inputs to predict with the best model
         """
-        self.predict_input.setGeometry(300, 600, 200, 32)
+        self.predict_input.setGeometry(400, 600, 200, 32)
         self.predict_input_label.setGeometry(200, 600, 200, 32)
         self.send_to_predict.setGeometry(250, 700, 400, 30)
         self.result_clf.setText("")
@@ -251,10 +256,14 @@ class PrimaryWindow(QMainWindow):
         if not user_input:
             self.show_err_msg("Input can't be empty!", user_input)
             return
-        # clf_result = best_model.predict([[123, 24]]) #TODO: let's talk about how we create a predict row
-        clf_result = 124124124124
-        writer.info(f"Prediction for {user_input} => {clf_result}")
-        self.result_clf.setText(f"Prediction: {clf_result}")
+        if not user_input.isdigit():
+            self.show_err_msg("Input has to be an integer!", user_input)
+            return
+        row = X_train.iloc[0].copy()  # take the first row to predict with
+        row.OverallQual = int(user_input)
+        clf_result = best_model.predict([row])[0]
+        writer.info(f"Prediction for OverallQuality {user_input} => {clf_result}")
+        self.result_clf.setText(f"Prediction: {clf_result:.2f}")
         self.result_clf.update()
 
 
